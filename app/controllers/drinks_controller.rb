@@ -10,7 +10,7 @@ class DrinksController < ApplicationController
 	render :json => {
 		status: 'success',
 		drinks: drinks.map{|d| 
-			d.as_json(only: [:id, :name]).merge(
+			d.as_json(only: [:id, :name, :img_url]).merge(
 				{ 
 					ingredients: d.drink_ingredients.map{
 						|i| i.as_json(only: [:amount]).merge({ 
@@ -40,6 +40,19 @@ class DrinksController < ApplicationController
   	like = Like.find_by(subscription_id: subscription.id, drink_id: params[:drink_id]) rescue nil
   	if like
   		like.destroy
+  	end
+  	render :json => {status: 'success'}
+  end
+
+  def favorite
+  	Favorite.find_or_create_by(user_id: current_user.id, drink_id: params[:drink_id])
+  	render :json => {status: 'success'}
+  end
+
+  def unfavorite
+  	favorite = Favorite.find_by(user_id: current_user.id, drink_id: params[:drink_id])
+  	if favorite
+  		favorite.destroy
   	end
   	render :json => {status: 'success'}
   end

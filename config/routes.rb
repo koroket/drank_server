@@ -14,7 +14,9 @@ Rails.application.routes.draw do
 
   get 'drinks/top' => 'drinks#top'
   put 'drinks/like' => 'drinks#like'
-  put 'drinks/dislike' => 'drinks#dislike' 
+  put 'drinks/dislike' => 'drinks#dislike'
+  post 'drinks/favorite' => 'drinks#favorite'
+  delete 'drinks/favorite' => 'drinks#unfavorite' 
 
   #DEBUG
   get    'login'   => 'sessions#create'

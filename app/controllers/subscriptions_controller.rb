@@ -39,7 +39,10 @@ class SubscriptionsController < ApplicationController
     if current_user
     	category = Category.find_by_id(params[:category_id]) rescue nil
     	return render :json => {status: 'error'} unless category
-    	Subscription.find_or_create_by(category_id: category.id, user_id: current_user.id)
+    	subscription = Subscription.find_or_create_by(category_id: category.id, user_id: current_user.id)
+    	category.drinks.each do |d|
+    		Recommendation.find_or_create_by(subscription_id: subscription.id, drink_id: d.id)
+    	end
 		respond_to do |format|
 			format.json { 
 				render :json => {

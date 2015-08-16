@@ -6,6 +6,7 @@ class Subscription < ActiveRecord::Base
 
 	has_many :likes
 	has_many :dislikes
+	has_many :recommendations
 
 	def self.recommend
 

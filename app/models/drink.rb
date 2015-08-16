@@ -6,6 +6,11 @@ class Drink < ActiveRecord::Base
 	has_many :categories, :through => :drink_categories
 
 	has_many :likes
+	has_many :dislikes
+	has_many :recommendations
+
+	has_many :favorites, :class_name => Favorite, :inverse_of => :drink, :dependent => :destroy
+	has_many :favorited_users, :through => :favorites, :source => :user
 
 	validates_uniqueness_of :name
 	validates :name, length: { minimum: 1 }
