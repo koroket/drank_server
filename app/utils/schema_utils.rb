@@ -22,10 +22,40 @@ module SchemaUtils
     end
   end
 
+  def self.create_categories
+    categories_dict = {
+      "Citrus" => ['%lemonade%', '%lime cordial%', '%grapefruit%', '%orange%', '%triple sec%', '%marnier%', '%cointreau%', '%aperol%'],
+      "Sour" => ['%sour%', '%pisco%'],
+      "Fruity" => ['%passoa%', '%cognac%', '%kirsch%', '%midori%', '%disaronno%', '%apricot%', '%brut%', '%lychee%', '%apple%', '%fruit%', '%berry%', '%grape%', '%pomegranate%', '%cherry%', '%cherries%', '%prune%', '%blue cura%', '%peach%'],
+      "Carbonated" => ['%soda%', '%coke%', '%ginger ale%', '%tonic%', '%mineral%', '%sparkling%'],
+      "Coffee" => ['%coffee%', '%café%', '%maria%'],
+      "Salty" => ['%salt%', '%sauce%'],
+      "Creamy" => ['%cream%', '%milk%'],
+      "Spiced" => ['%spiced%', '%cinnamon%', '%nutmeg%', '%leaf%', '%clove%', '%cardamon%', '%galliano%'],
+      "Spicy" => ['%pepper%', '%tabasco%', '%horse%'],
+      "Minty" => ['%mint%', '%menthe%'],
+      "Chocolate" => ['%cacao%', '%chocolate%', '%cocoa%'],
+      "Bitter" => ['%bitter%', '%campari%', '%aperol%', '%punt e mes%']
+    }
+    categories_dict.each do |k,v|
+      category = Category.find_or_create_by(name: k)
+      Drink.contains_ingredients(v).each do |drink|
+        DrinkCategory.find_or_create_by(category_id: category.id, drink_id: drink.id)
+      end
+    end
+  end
+
   # remove drinks
-  def self.remove
+  def self.remove_drinks
     Drink.all.each do |drink|
       drink.destroy
+    end
+  end
+
+  # remove subscription
+  def self.remove_sub
+    Subscription.all.each do |sub|
+      sub.destroy
     end
   end
 end
@@ -37,4 +67,6 @@ end
 # drinkIngredient - discription
 
 #      SchemaUtils.create_drinks
-#      SchemaUtils.remove
+#      SchemaUtils.remove_drinks
+#      SchemaUtils.create_categories
+#      SchemaUtils.remove_sub
