@@ -7,6 +7,7 @@ class DrinksController < ApplicationController
 	    group("drinks.id").
 	    order("likes_count DESC").
 	    limit(count)
+	favorited_ids = current_user.favorites.select('drink_id').map(&:drink_id).uniq
 	render :json => {
 		status: 'success',
 		drinks: drinks.map{|d| 
@@ -16,7 +17,8 @@ class DrinksController < ApplicationController
 						|i| i.as_json(only: [:amount]).merge({ 
 							name: i.ingredient.name 
 						})
-					} 
+					},
+					favorited: favorited_ids.include?(d['id'])
 				})
 		}
 	} 
@@ -55,5 +57,28 @@ class DrinksController < ApplicationController
   		favorite.destroy
   	end
   	render :json => {status: 'success'}
+  end
+
+  def favorite_list
+  	if current_user
+  		drinks = current_user.favorite_drinks
+		render :json => {
+			status: 'success',
+			drinks: drinks.map{|d| 
+				d.as_json(only: [:id, :name, :img_url]).merge(
+					{ 
+						ingredients: d.drink_ingredients.map{
+							|i| i.as_json(only: [:amount]).merge({ 
+								name: i.ingredient.name 
+							})
+						} 
+					})
+			}
+		}
+	else
+      respond_to do |format|
+        format.json { render :json => {status: 'error'} }
+      end
+	end
   end
 end

@@ -6,6 +6,7 @@ class CategoriesController < ApplicationController
 
 	liked_ids = subscription.likes.select('drink_id').map(&:drink_id).uniq
 	disliked_ids = subscription.dislikes.select('drink_id').map(&:drink_id).uniq
+	favorited_ids = current_user.favorites.select('drink_id').map(&:drink_id).uniq
 
 	drinks = subscription.drinks.
     joins("LEFT JOIN dislikes ON dislikes.subscription_id = #{subscription.id} AND dislikes.drink_id = drinks.id").
@@ -37,7 +38,8 @@ class CategoriesController < ApplicationController
 						})
 					},
 					liked: liked_ids.include?(drink['id']),
-					disliked: disliked_ids.include?(drink['id'])
+					disliked: disliked_ids.include?(drink['id']),
+					favorited: favorited_ids.include?(drink['id'])
 				})
 		}
     end
